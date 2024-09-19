@@ -10,7 +10,7 @@ It packs in lots of demanding features that allows your business to scale in no 
 
 ### 2. Requirements:
 
-* **Krayin**: v1.2.2 or higher.
+* **Krayin**: v2.0.0 or higher.
 
 
 ### 3. Installation:
@@ -97,6 +97,22 @@ Breadcrumbs::for('zoom.meeting.create', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
     $trail->push(trans('zoom_meeting::app.zoom.index.title'), route('admin.zoom_meeting.index'));
 });
+```
+
+* Goto **packages/Webkul/Core/src/Config/concord.php** and **config/concord.php** file and add following lines.
+
+```php
+<?php
+
+return [
+    'modules' => [
+        // ..
+        \Webkul\ZoomMeeting\Providers\ModuleServiceProvider::class,
+    ],
+
+    //..
+];
+
 ```
 
 ### 5. Clear Cache:
