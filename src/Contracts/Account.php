@@ -2,6 +2,4 @@
 
 namespace Webkul\ZoomMeeting\Contracts;
 
-interface Account
-{
-}
+interface Account {}

@@ -1,0 +1,28 @@
+{
+  "src/Resources/assets/css/app.css": {
+    "file": "assets/app-82dc09c3.css",
+    "isEntry": true,
+    "src": "src/Resources/assets/css/app.css"
+  },
+  "src/Resources/assets/fonts/icomoon.woff": {
+    "file": "assets/icomoon-75d4338a.woff",
+    "src": "src/Resources/assets/fonts/icomoon.woff"
+  },
+  "src/Resources/assets/images/zoom-logo.png": {
+    "file": "assets/zoom-logo-11641dbe.png",
+    "src": "src/Resources/assets/images/zoom-logo.png"
+  },
+  "src/Resources/assets/images/zoom-meeting-active-icon.svg": {
+    "file": "assets/zoom-meeting-active-icon-61a75f99.svg",
+    "src": "src/Resources/assets/images/zoom-meeting-active-icon.svg"
+  },
+  "src/Resources/assets/images/zoom-meeting-icon.svg": {
+    "file": "assets/zoom-meeting-icon-38977171.svg",
+    "src": "src/Resources/assets/images/zoom-meeting-icon.svg"
+  },
+  "src/Resources/assets/js/app.js": {
+    "file": "assets/app-4ed993c7.js",
+    "isEntry": true,
+    "src": "src/Resources/assets/js/app.js"
+  }
+}

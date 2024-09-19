@@ -2,82 +2,49 @@
 
 namespace Webkul\ZoomMeeting\Http\Controllers;
 
-use Webkul\ZoomMeeting\Services\Zoom;
-use Webkul\ZoomMeeting\Repositories\UserRepository;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Webkul\ZoomMeeting\Repositories\AccountRepository;
+use Webkul\ZoomMeeting\Repositories\UserRepository;
+use Webkul\ZoomMeeting\Services\Zoom as ZoomService;
 
 class AccountController extends Controller
 {
     /**
-     * Zoom object
-     *
-     * @var \Webkul\ZoomMeeting\Services\Zoom
-     */
-    protected $zoom;
-
-    /**
-     * UserRepository object
-     *
-     * @var \Webkul\ZoomMeeting\Repositories\UserRepository
-     */
-    protected $userRepository;
-
-    /**
-     * AccountRepository object
-     *
-     * @var \Webkul\ZoomMeeting\Services\AccountRepository
-     */
-    protected $accountRepository;
-
-    /**
      * Create a new controller instance.
-     *
-     * @param \Webkul\ZoomMeeting\Services\Zoom  $zoom
-     * @param \Webkul\ZoomMeeting\Repositories\UserRepository  $userRepository
-     * @param \Webkul\ZoomMeeting\Repositories\AccountRepository  $accountRepository
      *
      * @return void
      */
     public function __construct(
-        Zoom $zoom,
-        UserRepository $userRepository,
-        AccountRepository $accountRepository
-    )
-    {
-        $this->zoom = $zoom;
-
-        $this->userRepository = $userRepository;
-
-        $this->accountRepository = $accountRepository;
-    }
+        protected ZoomService $zoomService,
+        protected UserRepository $userRepository,
+        protected AccountRepository $accountRepository
+    ) {}
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $account = $this->accountRepository->findOneByField('user_id', auth()->user()->id);
 
-        return view('zoom_meeting::index', compact('account'));
+        return view('zoom_meeting::zoom.index', compact('account'));
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         if (! request()->has('code')) {
-            return redirect($this->zoom->createAuthUrl());
+            return redirect($this->zoomService->createAuthUrl());
         }
-        
-        $token = $this->zoom->getAccessToken(request()->get('code'));
 
-        $account = $this->zoom->getUserInfo($token);
-        
+        $token = $this->zoomService->getAccessToken(request()->get('code'));
+
+        $account = $this->zoomService->getUserInfo($token);
+
         $this->userRepository->find(auth()->user()->id)->accounts()->updateOrCreate(
             [
                 'zoom_id' => $account['account_id'],
@@ -87,20 +54,20 @@ class AccountController extends Controller
                 'token'  => $token,
             ]
         );
-    
+
+        session()->flash('success', trans('zoom_meeting::app.zoom.index.create-success'));
+
         return redirect()->route('admin.zoom_meeting.index');
     }
 
     /**
      * Create zoom meeting link
-     * 
-     * @return \Illuminate\Http\Response
      */
-    public function createLink()
+    public function createLink(): JsonResponse
     {
         $account = $this->accountRepository->findOneByField('user_id', auth()->user()->id);
 
-        $meeting = $this->zoom->createMeeting($account, request()->all());
+        $meeting = $this->zoomService->createMeeting($account, request()->all());
 
         if (is_string($meeting)) {
             return response()->json([
@@ -110,21 +77,21 @@ class AccountController extends Controller
 
         return response()->json([
             'link'    => $meeting->join_url,
-            'comment' => '──────────<br/><br/>You are invited to join Zoom meeting.<br/><br/>Join the Zoom meeting: <a href="' . $meeting->join_url . '" target="_blank">' . $meeting->join_url . '</a><br/>Password: ' . $meeting->password . '<br/><br/>──────────'
+            'comment' => trans('zoom_meeting::app.zoom.index.link-shared', [
+                'password' => $meeting->password,
+                'link'     => $meeting->join_url,
+            ]),
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  integer  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $this->accountRepository->destroy($id);
 
-        session()->flash('success', trans('zoom_meeting::app.destroy-success'));
+        session()->flash('success', trans('zoom_meeting::app.zoom.index.destroy-success'));
 
         return redirect()->back();
     }
