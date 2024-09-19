@@ -130,6 +130,19 @@
                     });
                 },
 
+                setFormValues({ location, comment, hasMeetLocation = false }) {
+                    this.meet = {
+                        location,
+                        comment,
+                        hasMeetLocation
+                    };
+
+                    this.setValues({
+                        location,
+                        comment,
+                    });
+                },
+
                 create(event) {                    
                     this.isLoading = true;
                     
@@ -157,19 +170,6 @@
                         .finally(() => {
                             this.isLoading = false;
                         });
-                },
-
-                setFormValues({ location, comment, hasMeetLocation = false }) {
-                    this.meet = {
-                        location,
-                        comment,
-                        hasMeetLocation
-                    };
-
-                    this.setValues({
-                        location,
-                        comment,
-                    });
                 },
             },
         });

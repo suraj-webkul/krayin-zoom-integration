@@ -11,7 +11,7 @@
         <x-admin::form.control-group>
             <div class="flex">
                 @if ($account)
-                    <template v-if="! meet.hasMeetLink">
+                    <template v-if="! meet.hasMeetLocation">
                         <!-- Create Zoom Meet -->
                         <button 
                             type="button"
@@ -39,7 +39,7 @@
                         <!-- Join Zoom Meet -->
                         <div class="flex items-center gap-2">
                             <a 
-                                :href="meet?.link"
+                                :href="meet?.location"
                                 target="_blank"
                                 class="secondary-button"
                             >
@@ -91,8 +91,8 @@
                     isLoading: false,
 
                     meet: {
-                        hasMeetLink: false,
-                        link: '',
+                        hasMeetLocation: false,
+                        location: '',
                         comment: '',
                     },
                 };
@@ -103,10 +103,23 @@
                     this.$emitter.emit('open-confirm-modal', {
                         agree: () => {
                             this.setFormValues({
-                                link: '',
+                                location: '',
                                 comment: '',
                             });
                         },
+                    });
+                },
+
+                setFormValues({ location, comment, hasMeetLocation = false}) {
+                    this.meet = {
+                        hasMeetLocation,
+                        location,
+                        comment,
+                    };
+
+                    this.$parent.$parent.$parent.$parent.$refs.modalForm.setValues({
+                        location,
+                        comment,
                     });
                 },
 
@@ -143,7 +156,8 @@
                         .then(response => {
                             this.setFormValues({
                                 ...response.data,
-                                hasMeetLink: true,
+                                location: response.data.link,
+                                hasMeetLocation: true,
                             });
                         })
                         .catch(error => {
@@ -153,19 +167,6 @@
                             this.isLoading = false;
                         });
                 },
-
-                setFormValues({ link, comment, hasMeetLink = false}) {
-                    this.meet = {
-                        hasMeetLink,
-                        link,
-                        comment,
-                    };
-
-                    this.$parent.$parent.$parent.$parent.$refs.modalForm.setValues({
-                        location: link,
-                        comment: comment,
-                    });
-                }
             },
         });
     </script>
