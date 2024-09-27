@@ -99,22 +99,6 @@ Breadcrumbs::for('zoom.meeting.create', function (BreadcrumbTrail $trail) {
 });
 ```
 
-* Goto **packages/Webkul/Core/src/Config/concord.php** and **config/concord.php** file and add following lines.
-
-```php
-<?php
-
-return [
-    'modules' => [
-        // ..
-        \Webkul\ZoomMeeting\Providers\ModuleServiceProvider::class,
-    ],
-
-    //..
-];
-
-```
-
 ### 5. Clear Cache:
 ~~~
 php artisan cache:clear
