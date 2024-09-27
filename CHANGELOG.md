@@ -4,7 +4,7 @@ This changelog consists of the bug & security fixes and new features being inclu
 
 ## **v2.0.1 (27th of September 2024)**
 
-* #54 [fixed] - Fix publishable issues.
+* #4 [fixed] - Fix publishable issues.
 
 ## **v2.0.0 (27th of September 2024)**
 
