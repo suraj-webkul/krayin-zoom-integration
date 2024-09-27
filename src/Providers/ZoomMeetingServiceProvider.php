@@ -37,6 +37,8 @@ class ZoomMeetingServiceProvider extends ServiceProvider
         Event::listen('admin.activities.edit.form_controls.after', function($viewRenderEventManager) {
             $viewRenderEventManager->addTemplate('zoom_meeting::activities.edit');
         });
+
+        $this->app->register(ModuleServiceProvider::class);
     }
 
     /**
