@@ -25,8 +25,8 @@ class ZoomMeetingServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../../publishable/assets'                                            => public_path('zoom'),
-            __DIR__.'/../Resources/views/components/activities/actions/activity.blade.php' => base_path().'/packages/Webkul/Admin/src/Resources/views/components/activities/actions/activity.blade.php',
-            __DIR__.'/../Resources/views/activities/edit.blade.php'                        => base_path().'/packages/Webkul/Admin/src/Resources/views/activities/edit.blade.php',
+            __DIR__.'/../Resources/views/components/activities/actions/activity.blade.php' => resource_path('views/vendor/admin/components/activities/actions/activity.blade.php'),
+            __DIR__.'/../Resources/views/activities/edit.blade.php'                        => resource_path('views/vendor/admin/activities/edit.blade.php'),
         ], 'public');
 
         Blade::anonymousComponentPath(__DIR__.'/../Resources/views/components', 'zoom_meeting');
