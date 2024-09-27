@@ -10,7 +10,7 @@ It packs in lots of demanding features that allows your business to scale in no 
 
 ### 2. Requirements:
 
-* **Krayin**: v1.2.2 or higher.
+* **Krayin**: v2.0.0 or higher.
 
 
 ### 3. Installation:
@@ -32,15 +32,20 @@ php artisan route:cache
 ~~~
 
 ~~~
-php artisan vendor:publish
+php artisan vendor:publish --force
 
--> Press 0 and then press enter to publish all assets and configurations.
+-> Search for **ZoomMeetingServiceProvider** and then press enter to publish all assets and configurations.
 ~~~
 
 
 ### 4. Configuration:
 
-* Goto .env file and add following lines
+* Goto **.env** file and add following lines
+
+Please make sure you have to add these scopes into your zoom app:
+
+- **user:read:user:admin**
+- **user:read:user**
 
 ```.env
 ZOOM_CLIENT_ID=
@@ -48,7 +53,7 @@ ZOOM_CLIENT_SECRET=
 ZOOM_REDIRECT_URI="${APP_URL}/admin/zoom/oauth"
 ```
 
-* Goto config/services.php file and add following lines
+* Goto **config/services.php** file and add following lines
 
 ```php
 return [
@@ -56,13 +61,58 @@ return [
     
     'zoom' => [
         // Our Zoom API credentials.
-        'client_id' => env('ZOOM_CLIENT_ID'),
+        'client_id'     => env('ZOOM_CLIENT_ID'),
         'client_secret' => env('ZOOM_CLIENT_SECRET'),
         
         // The URL to redirect to after the OAuth process.
-        'redirect_uri' => env('ZOOM_REDIRECT_URI'),
+        'redirect_uri'  => env('ZOOM_REDIRECT_URI'),
     ],
 ];
+```
+
+* Goto **config/krayin-vite.php** file and add following lines.
+
+```php
+<?php
+
+return [
+
+    'viters' => [
+        // ...
+
+        'zoom_meeting' => [
+            'hot_file'                 => 'zoom-vite.hot',
+            'build_directory'          => 'zoom/build',
+            'package_assets_directory' => 'src/Resources/assets',
+        ],
+    ],
+];
+
+```
+
+* Goto **routes/breadcrumbs.php** file and add following lines.
+
+```php
+Breadcrumbs::for('zoom.meeting.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push(trans('zoom_meeting::app.zoom.index.title'), route('admin.zoom_meeting.index'));
+});
+```
+
+* Goto **packages/Webkul/Core/src/Config/concord.php** and **config/concord.php** file and add following lines.
+
+```php
+<?php
+
+return [
+    'modules' => [
+        // ..
+        \Webkul\ZoomMeeting\Providers\ModuleServiceProvider::class,
+    ],
+
+    //..
+];
+
 ```
 
 ### 5. Clear Cache:

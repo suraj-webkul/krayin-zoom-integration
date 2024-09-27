@@ -2,10 +2,9 @@
 
 namespace Webkul\ZoomMeeting\Services;
 
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
-use Webkul\ZoomMeeting\Models\Account;
+use Illuminate\Support\Str;
 use Webkul\ZoomMeeting\Repositories\AccountRepository;
 
 class Zoom
@@ -27,10 +26,9 @@ class Zoom
     /**
      * Zoom Meeting service constructor.
      *
-     * @param \Webkul\ZoomMeeting\Repositories\AccountRepository  $accountRepository
      * @return void
      */
-    function __construct(AccountRepository $accountRepository)
+    public function __construct(AccountRepository $accountRepository)
     {
         $this->client = new Client(['base_uri' => 'https://api.zoom.us']);
 
@@ -42,7 +40,7 @@ class Zoom
      */
     public function createAuthUrl()
     {
-        return 'https://zoom.us/oauth/authorize?response_type=code&client_id=' . config('services.zoom.client_id') . '&redirect_uri=' . config('services.zoom.redirect_uri');
+        return 'https://zoom.us/oauth/authorize?response_type=code&client_id='.config('services.zoom.client_id').'&redirect_uri='.config('services.zoom.redirect_uri');
     }
 
     /**
@@ -55,7 +53,7 @@ class Zoom
 
         $response = $client->request('POST', '/oauth/token', [
             'headers'     => [
-                'Authorization' => 'Basic '. base64_encode(config('services.zoom.client_id') . ':' . config('services.zoom.client_secret')),
+                'Authorization' => 'Basic '.base64_encode(config('services.zoom.client_id').':'.config('services.zoom.client_secret')),
             ],
 
             'form_params' => [
@@ -76,7 +74,7 @@ class Zoom
     {
         $response = $this->client->request('GET', '/v2/users/me', [
             'headers' => [
-                'Authorization' => 'Bearer ' . $token['access_token'],
+                'Authorization' => 'Bearer '.$token['access_token'],
             ],
         ]);
 
@@ -86,7 +84,7 @@ class Zoom
     /**
      * @param  mixed  $account
      * @param  array  $data
-     * @return array
+     * @return mixed
      */
     public function createMeeting($account, $data)
     {
@@ -97,7 +95,7 @@ class Zoom
 
             $response = $this->client->request('POST', '/v2/users/me/meetings', [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $account->token['access_token'],
+                    'Authorization' => 'Bearer '.$account->token['access_token'],
                 ],
 
                 'json'    => [
@@ -108,10 +106,10 @@ class Zoom
                     'password'   => Str::random(7),
                 ],
             ]);
-    
+
             return json_decode($response->getBody());
         } catch (\Exception $e) {
-            if (401 == $e->getCode()) {
+            if ($e->getCode() == 401) {
                 $account = $this->refreshToken($account);
 
                 $this->createMeeting($account, $data);
@@ -131,7 +129,7 @@ class Zoom
 
         $response = $client->request('POST', '/oauth/token', [
             'headers'     => [
-                'Authorization' => 'Basic ' . base64_encode(config('services.zoom.client_id') . ':' . config('services.zoom.client_secret'))
+                'Authorization' => 'Basic '.base64_encode(config('services.zoom.client_id').':'.config('services.zoom.client_secret')),
             ],
 
             'form_params' => [
